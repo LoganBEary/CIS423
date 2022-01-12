@@ -28,8 +28,7 @@ class DropColumnsTransformer(BaseEstimator, TransformerMixin):
     result = self.transform(X)
     return result
   
-  
-  class OHETransformer(BaseEstimator, TransformerMixin):
+class OHETransformer(BaseEstimator, TransformerMixin):
     def __init__(self, target_column, dummy_na=False, drop_first=True):  
       self.target_column = target_column
       self.dummy_na = dummy_na
@@ -80,7 +79,7 @@ class RenamingTransformer(BaseEstimator, TransformerMixin):
     return result
   
   
-  class MappingTransformer(BaseEstimator, TransformerMixin):
+class MappingTransformer(BaseEstimator, TransformerMixin):
   
   def __init__(self, mapping_column, mapping_dict:dict):  
     self.mapping_dict = mapping_dict
