@@ -30,32 +30,32 @@ class DropColumnsTransformer(BaseEstimator, TransformerMixin):
   
   
   class OHETransformer(BaseEstimator, TransformerMixin):
-  def __init__(self, target_column, dummy_na=False, drop_first=True):  
-    self.target_column = target_column
-    self.dummy_na = dummy_na
-    self.drop_first = drop_first
+    def __init__(self, target_column, dummy_na=False, drop_first=True):  
+      self.target_column = target_column
+      self.dummy_na = dummy_na
+      self.drop_first = drop_first
   
   #fill in the rest below
 
-  def fit(self, X, y=None):
-    print("Warning: OHETransformer.fit does nothing.")
+    def fit(self, X, y=None):
+      print("Warning: OHETransformer.fit does nothing.")
     
-    return X
+      return X
   
 
-  def transform(self, X_table):
-    X_ = X_table.copy()
-    X_ = pd.get_dummies(X_, 
+    def transform(self, X_table):
+      X_ = X_table.copy()
+      X_ = pd.get_dummies(X_, 
                         prefix=self.target_column,
                         prefix_sep='_',
                         columns=[self.target_column],
                         dummy_na=self.dummy_na,
                         drop_first=self.drop_first)
-    return X_
+      return X_
 
-  def fit_transform(self, X, y=None):
-    result = self.transform(X)
-    return result
+    def fit_transform(self, X, y=None):
+      result = self.transform(X)
+      return result
   
   
   #This class will rename one or more columns.
