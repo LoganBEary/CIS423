@@ -35,7 +35,6 @@ class DropColumnsTransformer(BaseEstimator, TransformerMixin):
       self.dummy_na = dummy_na
       self.drop_first = drop_first
   
-  #fill in the rest below
 
     def fit(self, X, y=None):
       print("Warning: OHETransformer.fit does nothing.")
