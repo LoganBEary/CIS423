@@ -17,6 +17,8 @@ class DropColumnsTransformer(BaseEstimator, TransformerMixin):
     return X
 
   def transform(self, X):
+    compare_list = list(set(self.column_list) - set(X.columns.to_list()))
+    assert len(compare_list) == 0, f"{compare_list} not in table"
     X_ = X.copy()
     if self.action == 'keep':
       X_ = X_[self.column_list]
