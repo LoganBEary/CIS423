@@ -130,3 +130,31 @@ class PearsonTransformer(BaseEstimator, TransformerMixin):
   def fit_transform(self, X, y=None):
       result = self.transform(X)
       return result
+    
+class Sigma3Transformer(BaseEstimator, TransformerMixin):
+  def __init__(self, target_column):  
+    self.target_column = target_column
+
+  def compute_3sigma_boundaries(df, column_name):
+    #compute mean of column - look for method
+    m = df[column_name].mean()
+    #compute std of column - look for method
+    sigma = df[column_name].std()
+    return  (m-3*sigma,m+3*sigma) #(lower bound, upper bound)
+
+  def fit(self, X, y=None):
+    print("Warning: Sigma3Transformer.fit does nothing.")
+    return X
+
+  def transform(self, X):
+    assert isinstance(X, pd.core.frame.DataFrame), f'expected Dataframe but got {type(X)} instead.'
+    assert self.target_column in X.columns.to_list(), f'unknown column {self.target_column}'
+    assert all([isinstance(v, (int, float)) for v in X[self.target_column].to_list()])
+    X_ = X.copy()
+    minb, maxb = compute_3sigma_boundaries(X_, self.target_column)
+    X_[self.target_column] = X_[self.target_column].clip(lower=minb, upper=maxb)
+    return X_
+
+  def fit_transform(self, X, y=None):
+    result = self.transform(X)
+    return result
