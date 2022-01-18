@@ -103,7 +103,7 @@ class MappingTransformer(BaseEstimator, TransformerMixin):
     return result
   
   
-  class PearsonTransformer(BaseEstimator, TransformerMixin):
+class PearsonTransformer(BaseEstimator, TransformerMixin):
     def __init__(self, threshold):
       self.threshold = threshold
 
