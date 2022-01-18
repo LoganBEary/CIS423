@@ -104,28 +104,28 @@ class MappingTransformer(BaseEstimator, TransformerMixin):
   
   
   class PearsonTransformer(BaseEstimator, TransformerMixin):
-  def __init__(self, threshold):
-    self.threshold = threshold
+    def __init__(self, threshold):
+      self.threshold = threshold
 
   #define methods below
-  def fit(self, X, y=None):
-    print("Warning: PearsonTransformer.fit does nothing.")
-    return X
+    def fit(self, X, y=None):
+      print("Warning: PearsonTransformer.fit does nothing.")
+      return X
 
-  def transform(self, X, y=None):
-    assert isinstance(X, pd.core.frame.DataFrame), f'PearsonTransformer.transform expected Dataframe but got {type(X)} instead.'
-    assert isinstance(self.threshold, float), f'PearsonTransformer.transform expected a float but got {type(self.threshold)} instead'
-    X_ = X.copy()
-    X_ = X_.corr(method='pearson')
-    X_ = X_.abs() > self.threshold
-    upper_mask = np.triu(X_, 1)
-    np.fill_diagonal(upper_mask, False)
-    correlated_columns = [pos[1] for pos,x in np.ndenumerate(np.array(upper_mask)) if x == True]
-    array_indx = [i for n, i in enumerate(correlated_columns) if i not in correlated_columns[:n]]
-    correlated_columns = [masked_df.columns[x] for x in array_indx]
-    X_ = X_.drop(columns=correlated_columns)
-    return X_
+    def transform(self, X, y=None):
+      assert isinstance(X, pd.core.frame.DataFrame), f'PearsonTransformer.transform expected Dataframe but got {type(X)} instead.'
+      assert isinstance(self.threshold, float), f'PearsonTransformer.transform expected a float but got {type(self.threshold)} instead'
+      X_ = X.copy()
+      X_ = X_.corr(method='pearson')
+      X_ = X_.abs() > self.threshold
+      upper_mask = np.triu(X_, 1)
+      np.fill_diagonal(upper_mask, False)
+      correlated_columns = [pos[1] for pos,x in np.ndenumerate(np.array(upper_mask)) if x == True]
+      array_indx = [i for n, i in enumerate(correlated_columns) if i not in correlated_columns[:n]]
+      correlated_columns = [masked_df.columns[x] for x in array_indx]
+      X_ = X_.drop(columns=correlated_columns)
+      return X_
 
-  def fit_transform(self, X, y=None):
-    result = self.transform(X)
-    return result
+    def fit_transform(self, X, y=None):
+      result = self.transform(X)
+      return result
