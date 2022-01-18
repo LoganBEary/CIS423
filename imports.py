@@ -105,15 +105,15 @@ class MappingTransformer(BaseEstimator, TransformerMixin):
   
 class PearsonTransformer(BaseEstimator, TransformerMixin):
   
-   def __init__(self, threshold):
+  def __init__(self, threshold):
       self.threshold = threshold
 
   #define methods below
-   def fit(self, X, y=None):
+  def fit(self, X, y=None):
       print("Warning: PearsonTransformer.fit does nothing.")
       return X
 
-   def transform(self, X, y=None):
+  def transform(self, X, y=None):
       assert isinstance(X, pd.core.frame.DataFrame), f'PearsonTransformer.transform expected Dataframe but got {type(X)} instead.'
       assert isinstance(self.threshold, float), f'PearsonTransformer.transform expected a float but got {type(self.threshold)} instead'
       X_ = X.copy()
@@ -127,6 +127,6 @@ class PearsonTransformer(BaseEstimator, TransformerMixin):
       X_ = X_.drop(columns=correlated_columns)
       return X_
 
-   def fit_transform(self, X, y=None):
+  def fit_transform(self, X, y=None):
       result = self.transform(X)
       return result
