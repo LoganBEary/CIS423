@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.pipeline import Pipeline
+from sklearn.impute import KNNImputer
 
 
 class DropColumnsTransformer(BaseEstimator, TransformerMixin):
@@ -216,4 +217,24 @@ class MinMaxTransformer(BaseEstimator, TransformerMixin):
   def fit_transform(self, X, y=None):
     result = self.transform(X)
     return result
-  
+
+class KNNTransformer(BaseEstimator, TransformerMixin):
+  def __init__(self,n_neighbors=5, weights="uniform", add_indicator=False):
+    self.n_neighbors = n_neighbors
+    self.weights=weights 
+    self.add_indicator=add_indicator
+
+  def fit(self, X, y=None):
+    print("")
+    return X
+
+  def transform(self, X):
+    X_ = X.copy()
+    imputer = KNNImputer(n_neighbors=self.n_neighbors, weights=self.weights, add_indicator=self.add_indicator)
+    X_ = pd.DataFrame(data=imputer.fit_transform(X_),columns=X_.columns)
+    return X_
+
+
+  def fit_transform(self, X, y=None):
+    X_ = self.transform(X)
+    return X_
