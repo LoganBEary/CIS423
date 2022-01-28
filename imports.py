@@ -225,7 +225,7 @@ class KNNTransformer(BaseEstimator, TransformerMixin):
     self.add_indicator=add_indicator
 
   def fit(self, X, y=None):
-    print("")
+    print("Warning: KNNTransformer.fit does nothing.")
     return X
 
   def transform(self, X):
