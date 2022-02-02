@@ -6,6 +6,13 @@ from sklearn.pipeline import Pipeline
 from sklearn.impute import KNNImputer
 from sklearn.metrics import f1_score, balanced_accuracy_score, precision_score, recall_score
 
+def compute_3sigma_boundaries(df, column_name):
+    #compute mean of column - look for method
+    m = df[column_name].mean()
+    #compute std of column - look for method
+    sigma = df[column_name].std()
+    return  (m-3*sigma,m+3*sigma) #(lower bound, upper bound)
+
 def find_random_state(df, labels, n=200):
   var = [] 
   for i in range(1, n):
@@ -154,13 +161,6 @@ class PearsonTransformer(BaseEstimator, TransformerMixin):
 class Sigma3Transformer(BaseEstimator, TransformerMixin):
   def __init__(self, target_column):  
     self.target_column = target_column
-
-  def compute_3sigma_boundaries(df, column_name):
-    #compute mean of column - look for method
-    m = df[column_name].mean()
-    #compute std of column - look for method
-    sigma = df[column_name].std()
-    return  (m-3*sigma,m+3*sigma) #(lower bound, upper bound)
 
   def fit(self, X, y=None):
     print("Warning: Sigma3Transformer.fit does nothing.")
