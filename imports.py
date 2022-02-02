@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from sklearn import metrics
 import matplotlib.pyplot as plt
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.pipeline import Pipeline
