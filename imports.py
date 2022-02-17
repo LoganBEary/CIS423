@@ -11,119 +11,6 @@ from sklearn.metrics import f1_score, balanced_accuracy_score, precision_score, 
 from sklearn.linear_model import LogisticRegressionCV
 model = LogisticRegressionCV(random_state=1, max_iter=5000)
 
-#------------------------------------Helper Functions----------------------------------------------#
-
-def threshold_results(thresh_list, actuals, predicted):
-  result_df = pd.DataFrame(columns=['threshold', 'precision', 'recall', 'f1', 'accuracy'])
-  for t in thresh_list:
-    yhat = [1 if v >=t else 0 for v in predicted]
-    #note: where TP=0, the Precision and Recall both become 0
-    precision = precision_score(actuals, yhat, zero_division=0)
-    recall = recall_score(actuals, yhat, zero_division=0)
-    f1 = f1_score(actuals, yhat)
-    accuracy = accuracy_score(actuals, yhat)
-    result_df.loc[len(result_df)] = {'threshold':t, 'precision':precision, 'recall':recall, 'f1':f1, 'accuracy':accuracy}
-  return result_df
-
-
-def halving_search(model, grid, x_train, y_train, factor=3, scoring='roc_auc'):
-  #your code below
-  halving_cv = HalvingGridSearchCV(
-    model, grid,  #our model and the parameter combos we want to try
-    scoring=scoring,  #could alternatively choose f1, accuracy or others
-    n_jobs=-1,
-    min_resources="exhaust",
-    factor=factor,  #a typical place to start so triple samples and take top 3rd of combos on each iteration
-    cv=5, random_state=1234,
-    refit=True)
-  
-  grid_result = halving_cv.fit(x_train, y_train)
-  return grid_result
-
-def compute_3sigma_boundaries(df, column_name):
-    #compute mean of column - look for method
-    m = df[column_name].mean()
-    #compute std of column - look for method
-    sigma = df[column_name].std()
-    return  (m-3*sigma,m+3*sigma) #(lower bound, upper bound)
-
-def find_random_state(df, labels, n=200):
-  var = [] 
-  for i in range(1, n):
-    train_X, test_X, train_y, test_y = train_test_split(df, labels, test_size=0.2, shuffle=True,
-                                                    random_state=i, stratify=labels)
-    model.fit(train_X, train_y)  #train model
-    train_pred = model.predict(train_X)  #predict against training set
-    test_pred = model.predict(test_X)    #predict against test set
-    train_error = f1_score(train_y, train_pred)  #how bad did we do with prediction on training data?
-    test_error = f1_score(test_y, test_pred)     #how bad did we do with prediction on test data?
-    error_ratio = test_error/train_error        #take the ratio
-    var.append(error_ratio)
-
-    rs_value = sum(var)/len(var)
-    
-  idx = np.array(abs(var - rs_value)).argmin()
-  return idx
-
-
-def customer_setup(customer_table, transformer=customer_transformer, rs=107, ts=.2):
-    customers_features = customers_df.drop(columns=['Rating'])
-    labels = customers_df['Rating']
-    X_train, X_test, y_train, y_test = train_test_split(customers_features, labels, test_size=ts, shuffle=True,
-                                                    random_state=rs, stratify=labels)
-    
-    X_train_transformed = transformer.fit_transform(X_train)
-    X_test_transformed = transformer.fit_transform(X_test)
-
-    x_trained_numpy = X_train_transformed.to_numpy()
-    x_test_numpy = X_test_transformed.to_numpy()
-    y_train_numpy = np.array(y_train)
-    y_test_numpy = np.array(y_test)
-    
-    return x_trained_numpy, y_train_numpy, x_test_numpy, y_test_numpy
-
-def titanic_setup(titanic_table, transformer=titanic_transformer, rs=88, ts=.2):
-    titanic_features = titanic_table.drop(columns='Survived')
-    labels = titanic_table['Survived'].to_list()
-    X_train, X_test, y_train, y_test = train_test_split(titanic_features, labels, test_size=ts, shuffle=True,
-                                                    random_state=rs, stratify=labels)
-    
-    X_train_transformed = transformer.fit_transform(X_train)
-    X_test_transformed = transformer.fit_transform(X_test)
-
-    x_trained_numpy = X_train_transformed.to_numpy()
-    x_test_numpy = X_test_transformed.to_numpy()
-    y_train_numpy = np.array(y_train)
-    y_test_numpy = np.array(y_test)
-    
-    return x_trained_numpy, y_train_numpy, x_test_numpy, y_test_numpy
-
-def dataset_setup(feature_table, labels, the_transformer, rs=1234, ts=.2):
-    X_train, X_test, y_train, y_test = train_test_split(feature_table, labels, test_size=ts, shuffle=True,
-                                                    random_state=rs, stratify=labels)
-    
-    X_train_transformed = the_transformer.fit_transform(X_train)
-    X_test_transformed = the_transformer.fit_transform(X_test)
-
-    x_trained_numpy = X_train_transformed.to_numpy()
-    x_test_numpy = X_test_transformed.to_numpy()
-    y_train_numpy = np.array(y_train)
-    y_test_numpy = np.array(y_test)
-    
-    return x_trained_numpy, y_train_numpy, x_test_numpy, y_test_numpy
-
-def threshold_results(thresh_list, actuals, predicted):
-  result_df = pd.DataFrame(columns=['threshold', 'precision', 'recall', 'f1', 'accuracy'])
-  for t in thresh_list:
-    yhat = [1 if v >=t else 0 for v in predicted]
-    #note: where TP=0, the Precision and Recall both become 0
-    precision = precision_score(actuals, yhat, zero_division=0)
-    recall = recall_score(actuals, yhat, zero_division=0)
-    f1 = f1_score(actuals, yhat)
-    accuracy = accuracy_score(actuals, yhat)
-    result_df.loc[len(result_df)] = {'threshold':t, 'precision':precision, 'recall':recall, 'f1':f1, 'accuracy':accuracy}
-  return result_df
-
 #---------------------------------------Classes--------------------------------------#
 
 class DropColumnsTransformer(BaseEstimator, TransformerMixin):
@@ -376,3 +263,116 @@ customer_transformer = Pipeline(steps=[
     ('minmax', MinMaxTransformer()),
     ('imputer', KNNTransformer())
     ], verbose=True)
+
+#------------------------------------Helper Functions----------------------------------------------#
+
+def threshold_results(thresh_list, actuals, predicted):
+  result_df = pd.DataFrame(columns=['threshold', 'precision', 'recall', 'f1', 'accuracy'])
+  for t in thresh_list:
+    yhat = [1 if v >=t else 0 for v in predicted]
+    #note: where TP=0, the Precision and Recall both become 0
+    precision = precision_score(actuals, yhat, zero_division=0)
+    recall = recall_score(actuals, yhat, zero_division=0)
+    f1 = f1_score(actuals, yhat)
+    accuracy = accuracy_score(actuals, yhat)
+    result_df.loc[len(result_df)] = {'threshold':t, 'precision':precision, 'recall':recall, 'f1':f1, 'accuracy':accuracy}
+  return result_df
+
+
+def halving_search(model, grid, x_train, y_train, factor=3, scoring='roc_auc'):
+  #your code below
+  halving_cv = HalvingGridSearchCV(
+    model, grid,  #our model and the parameter combos we want to try
+    scoring=scoring,  #could alternatively choose f1, accuracy or others
+    n_jobs=-1,
+    min_resources="exhaust",
+    factor=factor,  #a typical place to start so triple samples and take top 3rd of combos on each iteration
+    cv=5, random_state=1234,
+    refit=True)
+  
+  grid_result = halving_cv.fit(x_train, y_train)
+  return grid_result
+
+def compute_3sigma_boundaries(df, column_name):
+    #compute mean of column - look for method
+    m = df[column_name].mean()
+    #compute std of column - look for method
+    sigma = df[column_name].std()
+    return  (m-3*sigma,m+3*sigma) #(lower bound, upper bound)
+
+def find_random_state(df, labels, n=200):
+  var = [] 
+  for i in range(1, n):
+    train_X, test_X, train_y, test_y = train_test_split(df, labels, test_size=0.2, shuffle=True,
+                                                    random_state=i, stratify=labels)
+    model.fit(train_X, train_y)  #train model
+    train_pred = model.predict(train_X)  #predict against training set
+    test_pred = model.predict(test_X)    #predict against test set
+    train_error = f1_score(train_y, train_pred)  #how bad did we do with prediction on training data?
+    test_error = f1_score(test_y, test_pred)     #how bad did we do with prediction on test data?
+    error_ratio = test_error/train_error        #take the ratio
+    var.append(error_ratio)
+
+    rs_value = sum(var)/len(var)
+    
+  idx = np.array(abs(var - rs_value)).argmin()
+  return idx
+
+
+def customer_setup(customer_table, transformer=customer_transformer, rs=107, ts=.2):
+    customers_features = customers_df.drop(columns=['Rating'])
+    labels = customers_df['Rating']
+    X_train, X_test, y_train, y_test = train_test_split(customers_features, labels, test_size=ts, shuffle=True,
+                                                    random_state=rs, stratify=labels)
+    
+    X_train_transformed = transformer.fit_transform(X_train)
+    X_test_transformed = transformer.fit_transform(X_test)
+
+    x_trained_numpy = X_train_transformed.to_numpy()
+    x_test_numpy = X_test_transformed.to_numpy()
+    y_train_numpy = np.array(y_train)
+    y_test_numpy = np.array(y_test)
+    
+    return x_trained_numpy, y_train_numpy, x_test_numpy, y_test_numpy
+
+def titanic_setup(titanic_table, transformer=titanic_transformer, rs=88, ts=.2):
+    titanic_features = titanic_table.drop(columns='Survived')
+    labels = titanic_table['Survived'].to_list()
+    X_train, X_test, y_train, y_test = train_test_split(titanic_features, labels, test_size=ts, shuffle=True,
+                                                    random_state=rs, stratify=labels)
+    
+    X_train_transformed = transformer.fit_transform(X_train)
+    X_test_transformed = transformer.fit_transform(X_test)
+
+    x_trained_numpy = X_train_transformed.to_numpy()
+    x_test_numpy = X_test_transformed.to_numpy()
+    y_train_numpy = np.array(y_train)
+    y_test_numpy = np.array(y_test)
+    
+    return x_trained_numpy, y_train_numpy, x_test_numpy, y_test_numpy
+
+def dataset_setup(feature_table, labels, the_transformer, rs=1234, ts=.2):
+    X_train, X_test, y_train, y_test = train_test_split(feature_table, labels, test_size=ts, shuffle=True,
+                                                    random_state=rs, stratify=labels)
+    
+    X_train_transformed = the_transformer.fit_transform(X_train)
+    X_test_transformed = the_transformer.fit_transform(X_test)
+
+    x_trained_numpy = X_train_transformed.to_numpy()
+    x_test_numpy = X_test_transformed.to_numpy()
+    y_train_numpy = np.array(y_train)
+    y_test_numpy = np.array(y_test)
+    
+    return x_trained_numpy, y_train_numpy, x_test_numpy, y_test_numpy
+
+def threshold_results(thresh_list, actuals, predicted):
+  result_df = pd.DataFrame(columns=['threshold', 'precision', 'recall', 'f1', 'accuracy'])
+  for t in thresh_list:
+    yhat = [1 if v >=t else 0 for v in predicted]
+    #note: where TP=0, the Precision and Recall both become 0
+    precision = precision_score(actuals, yhat, zero_division=0)
+    recall = recall_score(actuals, yhat, zero_division=0)
+    f1 = f1_score(actuals, yhat)
+    accuracy = accuracy_score(actuals, yhat)
+    result_df.loc[len(result_df)] = {'threshold':t, 'precision':precision, 'recall':recall, 'f1':f1, 'accuracy':accuracy}
+  return result_df
