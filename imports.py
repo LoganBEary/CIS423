@@ -3,6 +3,10 @@ import pandas as pd
 import numpy as np
 from sklearn import metrics
 import matplotlib.pyplot as plt
+from xgboost import XGBClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.linear_model import LogisticRegressionCV
+from sklearn.model_selection import HalvingGridSearchCV
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.pipeline import Pipeline
 from sklearn.impute import KNNImputer
