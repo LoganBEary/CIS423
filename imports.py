@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from xgboost import XGBClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import LogisticRegressionCV
+from sklearn.experimental import enable_halving_search_cv
 from sklearn.model_selection import HalvingGridSearchCV
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.pipeline import Pipeline
