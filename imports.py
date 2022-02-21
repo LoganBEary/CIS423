@@ -12,7 +12,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.pipeline import Pipeline
 from sklearn.impute import KNNImputer
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import f1_score, balanced_accuracy_score, precision_score, recall_score
+from sklearn.metrics import f1_score, balanced_accuracy_score, precision_score, recall_score, accuracy_score
 from sklearn.linear_model import LogisticRegressionCV
 model = LogisticRegressionCV(random_state=1, max_iter=5000)
 
