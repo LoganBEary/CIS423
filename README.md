@@ -1,3 +1,3 @@
-**CIS423 - Final Project**
+# CIS423 - Final Project
 
-**Using AI/ML modeling - I have created a website that will be able to predict ____ **
+**Using _AI/ML_ modeling - I have created a website that will be able to predict -----**
