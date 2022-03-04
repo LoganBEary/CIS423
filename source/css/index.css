@@ -1,0 +1,39 @@
+.body {
+	background-color: #6190d6;
+	width: 100%;
+	height: 100%;
+}
+
+.img {
+	 text-align: center;
+}
+
+.header {
+	text-align: center;
+	text-decoration: underline;
+
+}
+
+.form-group, .form-control {
+	padding-bottom: 10px;
+	padding-left: 10px;
+}
+
+.output {
+	margin-left: 30px;
+}
+
+.score_input {
+	padding:14px 10px 10px 10px;
+}
+
+#education, #race_ethnicity, #gender{
+	width:30%;
+
+}
+
+#english_score, #reading_score, #math_score {
+	padding: 5px;
+	width:25%;
+}
+
