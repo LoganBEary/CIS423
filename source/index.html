@@ -10,8 +10,59 @@
 <title>CIS423</title>
 </head>
 <body class="body">	
-	<h1 class="header"> CIS 423 Final Project </h1>
+	<h1 class="header"> CIS 423 Final Project - Predict Your Test Grade! </h1>
 	
+	<!--Insert an img of studying? -->
+	
+	<form>
+	<div class="form-group">
+    	<label for="gender_selection">Choose a Gender</label>
+			<select class="form-control" id="gender">
+				<option>Male</option>
+				<option>Female</option>
+    		</select>
+	</div>
+	<div class="form-group">
+    	<label for="race_ethnicity_selection">Choose your Race/Ethnicity</label>
+			<select class="form-control" id="race_ethnicity">
+				<option>Caucasian</option>
+				<option>Black or African American</option>
+				<option>American Indian or Alaska Native</option>
+				<option>Asian</option>
+				<option>Native Hawaiian or Other Pacific Islander</option>
+    		</select>
+	</div>
+	<div class="form-group">
+    	<label for="parents_education_selection">Parents level of Education</label>
+			<select class="form-control" id="education">
+				<option>Some High School</option>
+				<option>High School</option>
+				<option>Some College</option>
+				<option>Associates Degree</option>
+				<option>Bachelor's Degree </option>
+				<option>Masters Degree </option>
+    		</select>
+    <div class="form-group">
+    	<label for="exam_score">English Score</label>
+			<input type="score" class="form-control" id="english_score" aria-describedby="EnglishHelp" placeholder="Enter English Score">
+  	</div>
+  	<div class="form-group">
+	    	<label for="exam_score">Math Score</label>
+			<input type="score" class="form-control" id="math_score" placeholder="Enter Math Score">
+  	</div>
+	<div class="form-group">
+	    	<label for="exam_score">Reading Score</label>
+			<input type="score" class="form-control" id="reading_score" placeholder="Enter Reading Score">
+  	</div>
+	<button type="submit" class="btn btn-primary">Evaluate</button>
+	</form>
+	<div class="output">
+		<h3>Results:</h2>
+			<h4> XgBoost alone: -- </h4>
+			<h4> KNN alone: -- </h4>
+			<h4> ANN alone: -- </h4>
+			<h4> Ensemble: -- </h4>
+	</div>
 </body>
 </html>
  
