@@ -273,6 +273,22 @@ customer_transformer = Pipeline(steps=[
     ('imputer', KNNTransformer())
     ], verbose=True)
 
+loan_transformer = Pipeline(steps=[
+    ('Drop', DropColumnsTransformer(['Loan_ID'], 'drop')),
+    ('Marridge', MappingTransformer('Married', {'Yes': 1, 'No': 0})),
+    ('Gender', MappingTransformer('Gender', {'Male': 1, 'Female': 0})),
+    ('Dependent', MappingTransformer('Dependents', {'0':0, '1':1, '2':2, '3+':3})),
+    ('Education', MappingTransformer('Education', {'Graduate': 1, 'Not Graduate': 0})),
+    ('Self-Emp', MappingTransformer('Self_Employed', {'Yes': 1, 'No': 0})),
+    ('Property', OHETransformer(target_column='Property_Area', drop_first=False)),
+    ('App-Income', TukeyTransformer('ApplicantIncome', 'outer')),
+    ('CoApp-Income', TukeyTransformer('CoapplicantIncome', 'outer')),
+    ('Loan-Amnt', TukeyTransformer('LoanAmount', 'outer')),
+    ('scale', MinMaxTransformer()), 
+    ('imputer', KNNTransformer())
+    ], verbose=True)
+
+
 #------------------------------------Helper Functions----------------------------------------------#
 
 def threshold_results(thresh_list, actuals, predicted):
